@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kamus Slang dan Budaya Pop Indonesia</title>
+    <!-- Memuat Tailwind CSS untuk styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Konfigurasi Font dan Warna Kustom Tailwind -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
+        :root {
+            /* Warna kustom sesuai permintaan: Biru Tua, Abu-abu Kebiruan, Putih */
+            --color-navy: #000080;
+            --color-slate-blue: #6A8DAD;
+            --color-text: #FFFFFF;
+            --color-card-bg: #FFFFFF;
+            --color-text-dark: #1F2937;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC; /* Latar belakang sangat terang */
+        }
+        
+        .header-bg {
+            /* Gradasi Biru Tua ke Abu-abu Kebiruan */
+            background: linear-gradient(135deg, var(--color-navy) 0%, var(--color-slate-blue) 100%);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-input {
+            border: 2px solid var(--color-slate-blue);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: var(--color-navy);
+            box-shadow: 0 0 0 3px rgba(0, 0, 128, 0.2);
+        }
+
+        .entry-card {
+            border-left: 5px solid var(--color-navy);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .entry-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 128, 0.1), 0 4px 6px -2px rgba(0, 0, 128, 0.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header Sticky (Dominan dan Profesional) -->
+    <header id="sticky-header" class="sticky top-0 z-50 py-4 header-bg text-white">
+        <!-- Tambahkan text-center di sini untuk pemusatan judul dan penyusun -->
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h1 class="text-3xl font-extrabold tracking-tight mb-2 sm:mb-0">Kamus Slang dan Budaya Pop Indonesia</h1>
+            <p class="text-sm font-light opacity-80 mb-4 italic">Disusun oleh: Catharina Menur</p>
+            
+            <!-- Kolom Pencarian Dominan -->
+            <input 
+                type="text" 
+                id="search-input" 
+                placeholder="Cari Istilah (Contoh: Alig, Redflag, Salty...)" 
+                class="w-full p-3 rounded-xl search-input text-lg text-gray-800 focus:outline-none"
+                oninput="filterDictionary()"
+                autofocus
+            >
+        </div>
+    </header>
+
+    <!-- Konten Utama Kamus -->
+    <main class="flex-grow max-w-4xl mx-auto w-full p-4 sm:p-6">
+        
+        <!-- Area Keterangan Loading/Hasil -->
+        <div id="status-message" class="text-gray-600 text-center py-4 text-lg hidden"></div>
+        
+        <!-- Kontainer Entri Kamus -->
+        <div id="dictionary-entries" class="grid grid-cols-1 gap-6 mt-4">
+            <!-- Entri akan di-render di sini oleh JavaScript -->
+        </div>
+
+    </main>
+
+    <!-- Footer Otoritatif -->
+    <footer class="mt-8 py-6 bg-gray-100 text-gray-600 border-t border-gray-200">
+        <div class="max-w-4xl mx-auto px-4 text-center text-sm">
+            <p>"Digunakan untuk perkuliahan Leksikografi dan Penyusunan Kamus di USD"</p>
+            <p class="mt-2 text-xs opacity-70">&copy; 2025 Kamus Slang. Seluruh data diperbarui secara berkala.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript untuk Data dan Logika Pencarian -->
+    <script>
+        // Data Kamus berdasarkan permintaan pengguna
+        const dictionaryData = [
+            // A
+            { term: "Alig", definition: "Bentuk gaul dari kata gila, ungkapan ekspresif bisa bermakna kagum atau bercanda.", example: "Wih, outfit kamu hari ini **alig banget**, parah!", date: "14/10/2025" },
+            { term: "Anak Senja", definition: "Julukan bagi orang yang suka menikmati pemandangan senja, identik dengan suasana melankolis atau romantis.", example: "Dia tuh tipikal **anak senja**, suka nongkrong di kafe sambil nulis puisi.", date: "14/10/2025" },
+            { term: "Aura Magrib", definition: "Julukan untuk seseorang yang wajahnya taampak gelap, kusam, atau tidak bercahaya, menyerupai suasana temaram, sering digunakan untuk menyindir penampilan.", example: "Wajahnya tuh '**aura magrib** banget' kayak kurang semangat hidup.", date: "14/10/2025" },
+            // B
+            { term: "Bacot", definition: "Julukan untuk orang yang cerewet atau suka banyak bicara.", example: "Udah ah, **bacot** banget sih kamu dari tadi.", date: "14/10/2025" },
+            { term: "Bar-bar", definition: "Julukan untuk seseorang yang bertindak kasar, nekat, atau tanpa banyak pertimbangan.", example: "Netizennya **bar-bar** banget, baru lihat teaser langsung dihujat habis.", date: "14/10/2025" },
+            { term: "Bestie", definition: "Sahabat dekat, teman terbaik.", example: "Happy birthday, **bestie**! Semoga makin sukses!", date: "14/10/2025" },
+            // C
+            { term: "Cans", definition: "Bentuk gaul dari kata cantik, ungkapan ekspresif digunakan sebagai pujian untuk perempuan.", example: "Dia makin **cans** aja tiap kali nongol di story.", date: "14/10/2025" },
+            { term: "Cecan", definition: "Singkatan dari cewek cantik, sebutan untuk perempuan yang menarik secara fisik.", example: "Kelas baru banyak **cecan** ya, nggak heran cowok-cowok rajin masuk.", date: "14/10/2025" },
+            { term: "Cegil", definition: "Sebutan bercanda untuk “cewek gila”, biasanya dipakai akrab antar teman untuk perempuan heboh.", example: "Haha, dasar **cegil**! Baru juga dikasih kopi udah joget.", date: "14/10/2025" },
+            // D
+            { term: "Delulu", definition: "Dari kata delusional, julukan untuk orang yang terlalu berkhayal atau percaya pada hal yang tidak nyata terutama soal asmara atau idola.", example: "Fandom sebelah udah **delulu** banget yakin idolnya balas DM.", date: "14/10/2025" },
+            { term: "Dom", definition: "Singkatan dari domisili, untuk menanyakan atau menyebut lokasi tempat tinggal seseorang.", example: "**Dom** mana kak? Takutnya jauh kalau meet up.", date: "14/10/2025" },
+            // F
+            { term: "Flexing", definition: "Julukan untuk seseorang yang suka memamerkan harta, kemewahan, atau pencapaian untuk memperoleh validasi dari orang lain.", example: "Dia hobi banget **flexing** barang branded di Instagram.", date: "14/10/2025" },
+            { term: "Fear of Missing Out (FOMO)", definition: "Julukan untuk seseorang yang takut ketinggalan sesuatu, seperti tren, kegiatan sosial, pengalaman orang lain atau momen seru yang sedang berlangsung, sering memicu perilaku mengikuti atau ingin selalu update agar tidak tertinggal.", example: "Aku ikut aja deh, takut **FOMO** kalau nggak dateng.", date: "14/10/2025" },
+            // G
+            { term: "Gabrut", definition: "Singkatan dari “galau brutal”, julukan untuk seseorang yang sedang merasa galau atau sedih berlebihan, biasanya karena masalah asmara.", example: "Baru putus sehari, udah **gabrut** update story lagu sedih 24 jam.", date: "14/10/2025" },
+            { term: "Gamon", definition: "Singkatan dari “gagal move on”, julukan untuk seseorang yang belum bisa melupakan mantan atau pengalaman masa lalu.", example: "Udah dua tahun loh, masih **gamon** aja sama mantan.", date: "14/10/2025" },
+            { term: "Gaskeun", definition: "Ungkapan untuk mengajak langsung melakukan sesuatu tanpa banyak berpikir.", example: "Udah siap? **Gaskeun** liburannya!", date: "14/10/2025" },
+            { term: "Gaje", definition: "Singkatan dari “gak jelas”, perilaku atau ucapan yang sulit dimengerti.", example: "Obrolannya **gaje** banget, nggak nyambung sama topik.", date: "14/10/2025" },
+            { term: "Greenflag", definition: "Julukan untuk seseorang yang menunjukkan perilaku sehat dan layak dijadikan pasangan atau teman dekat.", example: "Dia tuh **greenflag** banget, selalu dengerin dan support pasangannya.", date: "14/10/2025" },
+            // K
+            { term: "Kalcer", definition: "Dari kata culture, merujuk pada gaya hidup tren kekinian, seperti fashion, musik, atau acara populer.", example: "Anak-anak skena lagi bahas **kalcer** thrift outfit di Twitter.", date: "14/10/2025" },
+            { term: "Kuy", definition: "Dari kata “yuk” yang dibalik, ajakan untuk pergi atau melakukan sesuatu.", example: "Makan bakso **kuy**, udah laper banget nih.", date: "14/10/2025" },
+            // M
+            { term: "Main Character", definition: "Julukan untuk seseorang yang dianggap menjadi pusat perhatian, berkharisma, atau memiliki gaya hidup seperti tokoh utama dalam cerita.", example: "Pas dia masuk ruangan, semua mata langsung ke dia. **Main character** banget.", date: "14/10/2025" },
+            { term: "Mantul", definition: "Singkatan dari “mantap betul”, seruan untuk mengekspresikan rasa kagum, puas, atau setuju.", example: "Wah, ide lo **mantul** banget! Langsung eksekusi yuk.", date: "14/10/2025" },
+            // N
+            { term: "Ngabrut", definition: "Julukan untuk seseorang yang suka tertawa keras dan tidak terkendali.", example: "Nontonnya lucu banget sampe **ngabrut** gue ketawa.", date: "14/10/2025" },
+            { term: "Nolep", definition: "Singkatan dari no life, julukan untuk orang yang jarang bersosialisasi dan lebih banyak menghabiskan waktunya di rumah.", example: "Weekend gue **nolep** aja di rumah, main game.", date: "14/10/2025" },
+            { term: "Nongki", definition: "Bentuk gaul dari nongkrong, kegiatan berkumpul santai bersama teman.", example: "Besok **nongki** di taman kota yuk, lama nggak kumpul.", date: "14/10/2025" },
+            { term: "NPC Moment", definition: "Julukan untuk seseorang yang berperilaku pasif, terkesan tidak berinisiatif (dari karakter game Non-Player Character).", example: "Dia cuma diem aja di pojokan, **NPC moment** banget.", date: "14/10/2025" },
+            // P
+            { term: "Periodt", definition: "Ungkapan penegasan untuk menunjukkan bahwa pernyataan sebelumnya sudah final benar dan tidak perlu diperdebatkan lagi.", example: "Aku nggak mau bahas lagi, dia emang salah. **Periodt**!", date: "14/10/2025" },
+            // R
+            { term: "Receh", definition: "Julukan untuk orang yang mudah tertawa bahkan hanya pada lelucon sederhana.", example: "Meme **receh** begini kok bikin gue ngakak sampai sesak.", date: "14/10/2025" },
+            { term: "Redflag", definition: "Julukan untuk seseorang yang memiliki sifat atau perilaku yang menjadi tanda bahaya dalam hubungan suatu hubungan atau berpotensi bermasalah.", example: "Baru PDKT tapi udah ngecek HP, itu **redflag** banget ga sih?", date: "14/10/2025" },
+            { term: "Rizz", definition: "Julukan bagi seseorang yang memiliki daya tarik atau pesona tinggi, mampu membuat orang lain tertarik atau nyaman.", example: "Dia punya **rizz** tinggi, semua orang suka ngobrol sama dia.", date: "14/10/2025" },
+            // S
+            { term: "Salbrut", definition: "Singkatan dari “salah tingkah brutal”, julukam untuk seseorang yang grogi, malu, baper, atau salah tingkah yang berlebihan sampai merah wajahnya.", example: "Pas ditatap gebetan, dia langsung **salbrut** parah.", date: "14/10/2025" },
+            { term: "Salty", definition: "Julukan untuk seseorang yang mudah kesal, tersinggung, atau merasa tersakiti, biasanya karena hal sepele.", example: "Santai aja bro, nggak usah **salty** cuma karena aku menang game.", date: "14/10/2025" },
+            { term: "Sat-set", definition: "Julukan untuk orang yang tanggap, gesit, dan cepat dalam bertindak atau merespons sesuatu.", example: "Kalau disuruh kerja, dia **sat-set** banget, langsung beres.", date: "14/10/2025" },
+            { term: "Side eye", definition: "Julukan untuk seseorang yang suka menatap, menilai, atau memberi ekspresi sinis terhadap orang lain, biasanya menunjukkan ketidaksetujuan atau sindirian.", example: "Kalau ketemu orang yang sok pinter, aku cuma kasih **side eye** aja.", date: "14/10/2025" },
+            { term: "Sigma", definition: "Julukan untuk seseorang yang mandiri dan tidak bergantung pada opini orang lain, sering disebut 'Sigma Male'.", example: "Dia jalan sendiri, nggak peduli tren, **sigma vibes** banget.", date: "14/10/2025" },
+            { term: "Skena", definition: "Dari kata scene, komunitas atau gaya dalam budaya tertentu, sering dikaitkan dengan musik atau fashion.", example: "Dia anak **skena** indie, sering tampil di gigs lokal.", date: "14/10/2025" },
+            { term: "Slay", definition: "Julukan untuk seseorang yang tampil luar biasa dan memukau, berpenampilan atau beraksi dengan sangat keren.", example: "Outfit kamu **slay** banget hari ini!", date: "14/10/2025" },
+            { term: "Slebew", definition: "Seruan ekspresif yang menunjukkan semangat atau keseruan. Asal dari plesetan kata yang viral.", example: "Wah, konser kemarin **slebew** banget, seru parah!", date: "14/10/2025" },
+            { term: "Slow Respon", definition: "Julukan untuk seseorang yang memiliki sikap atau kebiasaan lambat menanggapi pesan atau panggilan.", example: "Maaf ya **slow respon**, tadi ketiduran.", date: "14/10/2025" },
+            { term: "Sotoy", definition: "Julukan untuk orang yang sok tahu atau merasa paling mengerti padahal tidak.", example: "Jangan **sotoy** deh, kamu belum tau semua faktanya.", date: "14/10/2025" },
+            { term: "Spam", definition: "Julukan untuk seseorang yang suka mengirim pesan atau komentar berulang-ulang dalam waktu singkat.", example: "Jangan **spam** chat kayak gitu, notif-nya rame banget.", date: "14/10/2025" },
+            { term: "Spill", definition: "Mengungkap cerita, rahasia, atau informasi (dari kata *spill the tea*).", example: "**Spill** dong, siapa yang ngajak kamu jalan?", date: "14/10/2025" },
+            { term: "Stan", definition: "Julukan untuk penggemar yang sangat fanatik terhadap idola, artis, atau sesuatu hingga mendukungnya total, juga dapat berarti “menjadi penggemar berat”.", example: "Udah 5 tahun aku **stan** grup itu, nggak bisa pindah hati.", date: "14/10/2025" },
+            { term: "Stecu", definition: "Singkatan dari “setelan cuek”, menggambarkan sikap orang yang terlihat tidak peduli atau tidak tertarik.", example: "Pas dipanggil aja **stecu**, padahal denger tapi pura-pura nggak tahu.", date: "14:10/2025" },
+            { term: "Sus", definition: "Dari kata suspicious, mencurigakan atau membuat orang ragu.", example: "Kok dia tiba-tiba baik banget, agak **sus** ya?", date: "14/10/2025" },
+            // T
+            { term: "Takis", definition: "Kebalikan dari “sikat”, ajakan untuk segera berangkat atau melakukan sesuatu sekarang juga.", example: "**Takis** yuk, keburu hujan nanti!", date: "14/10/2025" },
+            { term: "Toxic", definition: "Julukan untuk seseorang atau perilaku yang merugikan, negatif, atau merusak suasana, dapat menggambarkan orang yang manipulatif, menyebalkan, atau memberi energi buruk kepada orang lain.", example: "Hubungan mereka udah **toxic**, tapi masih aja dipertahankan.", date: "14/10/2025" },
+            // V
+            { term: "Vibes", definition: "Suasana atau perasaan yang mempengaruhi pengalaman seseorang di suatu tempat, momen, atau pergaulan, kesan yang membuat nyaman atau sebaliknya.", example: "Tempat ini **vibes**-nya cozy banget buat nugas.", date: "14/10/2025" },
+            // W
+            { term: "Woles", definition: "Kebalikan dari “slow”, ungkapan yang berarti santai atau tidak tergesa-gesa (dari kata *slow* yang dibalik).", example: "Santai aja bro, **woles**… rezeki nggak ke mana.", date: "14/10/2025" },
+            // Y
+            { term: "Ytta", definition: "Akronim dari yang tau-tau aja, ungkapan untuk memberi kode bahwa hanya orang tertentu yang paham maksud atau informasi yang dimaksud.", example: "Gue nggak bisa cerita di sini, **ytta** aja deh.", date: "14/10/2025" },
+        ];
+
+        const entriesContainer = document.getElementById('dictionary-entries');
+        const statusMessage = document.getElementById('status-message');
+
+        /**
+         * Membuat elemen HTML untuk satu entri kamus.
+         * @param {Object} entry Objek entri kamus.
+         * @returns {string} String HTML untuk entri tersebut.
+         */
+        function createEntryHTML(entry) {
+            const searchLink = `https://www.google.com/search?q=${encodeURIComponent(entry.term + " slang Indonesia")}`;
+            
+            // Format contoh kalimat: mengganti **teks** menjadi <strong>teks</strong>
+            // Ini memastikan simbol ** tidak muncul dan teks tetap bold.
+            const formattedExample = entry.example.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Istilah Utama (Term)
+            // Definisi Jelas (Definition)
+            // Contoh Penggunaan (Example)
+            // Link Pencarian Google
+            // Tanggal Pembaruan (Update Date)
+            return `
+                <div class="entry-card bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 ease-in-out">
+                    <!-- Istilah Utama -->
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">${entry.term}</h2>
+                    
+                    <!-- Definisi Jelas -->
+                    <p class="text-gray-700 leading-relaxed mb-4">${entry.definition}</p>
+                    
+                    <!-- Contoh Penggunaan -->
+                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 mb-4">
+                        <p class="text-sm text-gray-600 font-semibold mb-1">Contoh Penggunaan:</p>
+                        <p class="italic text-gray-800">${formattedExample}</p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center text-sm">
+                        <!-- Link Pencarian Google -->
+                        <a 
+                            href="${searchLink}" 
+                            target="_blank" 
+                            class="text-blue-700 hover:text-blue-900 font-medium transition duration-150 ease-in-out underline mb-2 sm:mb-0"
+                            rel="noopener noreferrer"
+                        >
+                            Cari Istilah di Google &rarr;
+                        </a>
+                        
+                        <!-- Tanggal Pembaruan Entri -->
+                        <p class="text-xs text-gray-400">Diperbarui: ${entry.date}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * Fungsi utama untuk memfilter dan me-render entri kamus.
+         */
+        function filterDictionary() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            
+            // Filter data
+            const filteredEntries = dictionaryData.filter(entry => 
+                entry.term.toLowerCase().includes(query) ||
+                entry.definition.toLowerCase().includes(query)
+            ).sort((a, b) => a.term.localeCompare(b.term)); // Selalu diurutkan A-Z
+
+            // Clear container
+            entriesContainer.innerHTML = '';
+            statusMessage.classList.add('hidden');
+
+            if (filteredEntries.length === 0 && query.length > 0) {
+                // Tampilkan pesan jika tidak ada hasil untuk pencarian
+                statusMessage.textContent = `Tidak ada entri yang cocok dengan kata kunci: "${query}"`;
+                statusMessage.classList.remove('hidden');
+            } else if (filteredEntries.length > 0) {
+                // Render hasil yang difilter
+                const htmlContent = filteredEntries.map(entry => createEntryHTML(entry)).join('');
+                entriesContainer.innerHTML = htmlContent;
+            }
+        }
+
+        // Jalankan filter saat halaman dimuat untuk menampilkan semua entri
+        window.onload = function() {
+            filterDictionary();
+            // Fokuskan kursor pada kolom pencarian saat halaman siap
+            document.getElementById('search-input').focus();
+        };
+    </script>
+</body>
+</html>
